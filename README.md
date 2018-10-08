@@ -103,23 +103,23 @@ CMDB管理系统,基于Ansible最新版开发,采用前后端分离架构
 ## 效果
 首页：
 
-![Image text](https://github.com/987334176/Autocmdb/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E9%A6%96%E9%A1%B5.png)
+![Image text](https://github.com/py3study/AutoCmdb/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E9%A6%96%E9%A1%B5.png)
 
 ansible管理：
 
-![Image text](https://github.com/987334176/Autocmdb/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E7%99%BB%E5%BD%95.png)
+![Image text](https://github.com/py3study/AutoCmdb/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/ansible%E7%AE%A1%E7%90%86.png)
 
 ansible主机：
 
-![Image text](https://github.com/987334176/Autocmdb/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E7%94%A8%E6%88%B7%E6%B3%A8%E5%86%8C.png)
+![Image text](https://github.com/py3study/AutoCmdb/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/ansible%E4%B8%BB%E6%9C%BA.png)
 
 主机详情：
 
-![Image text](https://github.com/987334176/Autocmdb/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E8%81%8A%E5%A4%A9.png)
+![Image text](https://github.com/py3study/AutoCmdb/blob/master/%E6%95%88%E6%9E%9C%E5%9B%BE/%E4%B8%BB%E6%9C%BA%E8%AF%A6%E6%83%85.png)
 
 
 ## 运行方式
-###ansible主控端
+### ansible主控端
 ```
 首先需要编译安装python3,请参考链接:
 http://www.py3study.com/Article/details/id/320.html
@@ -135,7 +135,7 @@ pip3 install ansible
 最后切换到项目目录,使用以下命令运行
 python3 manage.py runserver 0.0.0.0:8000
 ```
-###ansible被控端
+### ansible被控端
 ```
 编译安装python3,参考上面的操作
 安装python相关模块
