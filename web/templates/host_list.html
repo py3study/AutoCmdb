@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <style type="text/css">
+        .table th, .table td {
+            /* 文字垂直居中 */
+            text-align: center;
+            vertical-align: middle !important;
+        }
+    </style>
+
+{#    <a href="/web/host/add/" class="btn btn-info btn-default">添加</a>#}
+
+    <div style="height: 10px"></div>
+    <div class="panel panel-primary">
+        <!-- Default panel contents -->
+        <div class="panel-heading">主机列表</div>
+        <!-- Table -->
+        <table class="table table-hover" id="tab">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>主机名</th>
+                <th>IP地址</th>
+                <th>CPU</th>
+                <th>内存</th>
+                <th>操作系统</th>
+                <th>是否在线</th>
+                <th>选项</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/api/host/list/",
+                type: 'post',
+                data: {
+                    {#host: $('#host').val(),#}
+                },
+                success: function (data) {
+                    var data = JSON.parse(data);
+                    console.log(data);
+                    if (data.code == '200') {
+                        {#window.location = data.url;#}
+                        {#console.log("获取数据成功");#}
+                        for (var i = 0; i < data.data.length; i++) {
+                            {#console.log(data.data[i]);#}
+                            let id = data.data[i]['id'];
+                            let hostname = data.data[i]['hostname'];
+                            let iparray = data.data[i]['ipaddr'];
+                            let ipaddr = '';
+                            for (var j = 0; j < iparray.length; j++) {
+                                {#console.log(iparray[j]['ipaddr']);#}
+                                ipaddr += iparray[j]['ipaddr'] + '<br/>';
+                            }
+                            let cpu = data.data[i]['cpu'];
+                            let memory = data.data[i]['memory'];
+                            let os = data.data[i]['os'];
+                            let status = data.data[i]['status'];
+                            $('#tab tbody').append(
+                                `<tr>
+                                    <td>${ id }</td>
+                                    <td>
+                                        <a href="/web/host/info/${ id }">${ hostname }</a>
+                                    </td>
+                                    <td>${ ipaddr }</td>
+                                    <td>${ cpu } 核</td>
+                                    <td>${ memory }</td>
+                                    <td>${ os }</td>
+                                    <td>
+                                        ${ status ? '是' : '否' }
+                                    </td>
+                                    <td>
+                                        <a href="/web/host/info/${id}">查看详细&nbsp;</a>
+                                         |<button type="button" class="btn btn-default btn-link delete" id="abc" delete="${id}">删除</button>
+
+                                     </td>
+                                </tr>`);
+
+                        }
+
+                        // 删除,由于是js动态加载,所以点击事件必须写在success里面
+                        $(".btn.btn-default.btn-link.delete").click(function () {
+                            var line_num = $(this).attr("delete");  //一行数据的id值
+                            var _this = $(this);  //选择删除的那一行
+                            swal({
+                                    title: "亲，您确定删除吗？",
+                                    text: "删除可就找不回来了哦！",
+                                    type: "warning",
+                                    showCancelButton: true,
+                                    confirmButtonColor: "#DD6B55",
+                                    confirmButtonText: "确定删除！",
+                                    cancelButtonText: "取消删除！",
+                                    closeOnConfirm: false,
+                                    closeOnCancel: false
+                                },
+                                function (isConfirm) {
+                                    if (isConfirm) {
+                                        $.ajax({
+                                            url: "/api/host/delete/"+line_num,
+                                            type: "delete",
+                                            {#data: {#}
+                                            {#    'id': line_num,#}
+                                            {# },#}
+                                            success: function (data) {
+                                                var data = JSON.parse(data);  //反序列化数据
+                                                if (data.code == '200') { //判断json的状态
+                                                    swal("删除成功！", "记录已经被删除。",
+                                                        "success");
+                                                    _this.parent().parent().remove();  //移除tr标签
+                                                } else {
+                                                    swal("删除失败！", data.error,
+                                                        "error");
+                                                    window.top = "/web/";  //跳转
+                                                }
+                                            }
+
+                                        });
+                                    } else {
+                                        swal("取消！", "你的数据是安全的:)",
+                                            "error");
+                                    }
+                                });
+                        });
+
+                    } else {
+                        alert(data.error);
+                    }
+
+                }
+            });
+
+
+        });
+
+
+    </script>
+
+{% endblock %}
+

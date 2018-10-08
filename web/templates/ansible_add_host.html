@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div id="loading"
+     style="cursor: progress; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: #fff; z-index: 10000; overflow: hidden;">
+        <img src="{% static 'img/ajax-loader.gif' %}"
+         style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; margin: auto;"/>
+    </div>
+
+    <div class="col-sm-6 col-sm-offset-3">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">添加主机</h3>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="host" class="col-sm-3 control-label">主机</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="host" placeholder="主机ip或主机名">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ssh" class="col-sm-3 control-label">SSH端口</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="ssh" placeholder="SSH端口号" value="22">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ssh" class="col-sm-3 control-label">Centos版本</label>
+                        <div class="col-sm-9">
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" name="version" id="options1" value="6">
+                                    6.x
+                                </label>
+                                <span style="margin-left: 10px"></span>
+                                <label>
+                                    <input type="radio" name="version" id="options2" value="7" checked>
+                                    7.x
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ssh" class="col-sm-3 control-label">用户名</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="user" placeholder="用户名" value="root">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ssh" class="col-sm-3 control-label">密码</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control" id="pwd" placeholder="密码">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input type="button" id="sub" class="btn btn-success" value="提交">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        //显示加载数据
+        function ShowDiv() {
+            $("#loading").show();
+        }
+        //隐藏加载数据
+        function HiddenDiv() {
+            $("#loading").hide();
+        }
+        HiddenDiv();
+
+
+        $('#sub').click(function () {
+            var host = $('#host').val();
+            var port = $('#ssh').val();
+            var version = $("input[name='version']:checked").val();
+            var user = $('#user').val();
+            var pwd = $('#pwd').val();
+
+            if (host.length == 0) {
+                {#alert("主机不能为空");#}
+                sweetAlert("添加失败！", "主机不能为空", "error");
+            } else {
+                $.ajax({
+                    url: "/api/ansible/add_host/",
+                    type: 'post',
+                    data: {
+                        pk:{{ pk }},
+                        host: host,
+                        port: port,
+                        version: version,
+                        user: user,
+                        pwd: pwd,
+
+                    },
+                    success: function (data) {
+                        var data = JSON.parse(data);
+                        console.log(data);
+                        if (data.code == '200') {
+                            console.log(data.url);
+                            window.location.href = data.url;
+                            swal({
+                                title: '添加成功',
+                                type: 'success',  //展示成功的图片
+                                timer: 500,  //延时500毫秒
+                                showConfirmButton: false  //关闭确认框
+                             }, function () {
+                                window.location.href = data.url;  //跳转
+                             });
+                            {#alert("添加成功");#}
+                        } else {
+                            {#$('#error').text(data.error);#}
+                            {#alert("添加失败！"+data.error);#}
+                            sweetAlert("添加失败！", data.error, "error");
+                        }
+
+                    },
+                    async: true,
+                    beforeSend: function () {
+                        ShowDiv();
+                    },
+                    complete: function () {
+                        HiddenDiv();
+                    },
+                })
+            }
+
+        });
+
+    </script>
+
+{% endblock %}

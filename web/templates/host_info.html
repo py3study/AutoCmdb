@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-4 column">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            主机
+                        </h3>
+                    </div>
+                    <ul class="list-group" id="host">
+
+                    </ul>
+                </div>
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            主机详情
+                        </h3>
+                    </div>
+                    <ul class="list-group" id="hostinfo">
+
+                    </ul>
+                </div>
+
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            磁盘
+                        </h3>
+                    </div>
+                    <ul class="list-group" id="disk">
+
+                    </ul>
+                </div>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            网络
+                        </h3>
+                    </div>
+                    <ul class="list-group" id="network">
+
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-8 column">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            CPU
+                        </h3>
+                    </div>
+                    <div class="panel-body" style="height: 490px">
+                        <iframe class="LRADMS_iframe" width="100%" height="100%" src="/web/host/cpu/monitor/{{ pk }}/" frameborder="0"></iframe>
+                    </div>
+
+                </div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            内存
+                        </h3>
+                    </div>
+                    <div class="panel-body" style="height: 490px">
+                        <iframe class="LRADMS_iframe" width="100%" height="100%" src="/web/host/memory/monitor/{{ pk }}/" frameborder="0"></iframe>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            let id = {{ pk }};
+            if (!id) {
+                alert("参数非法");
+            } else {
+                // 主机
+                $.ajax({
+                    url: "/api/host/{{ pk }}/",
+                    type: 'get',
+                    data: {
+                        {#host: $('#host').val(),#}
+                    },
+                    success: function (data) {
+                        var data = JSON.parse(data);
+                        {#console.log(data);#}
+                        if (data.code == '200') {
+                            {#window.location = data.url;#}
+                            {#console.log("获取数据成功");#}
+                            console.log(data);
+                            for (var i = 0; i < data.data.length; i++) {
+                                {#console.log(data.data[i]);#}
+                                let id = data.data[i]['id'];
+                                let hostname = data.data[i]['hostname'];
+                                let cpu = data.data[i]['cpu'];
+                                let memory = data.data[i]['memory'];
+                                let os = data.data[i]['os'];
+                                let status = data.data[i]['status'];
+                                $('#host').append(
+                                    `
+                                <li class="list-group-item">主机名: ${ hostname }</li>
+                                <li class="list-group-item">CPU: ${ cpu } 核</li>
+                                <li class="list-group-item">内存: ${ memory }</li>
+                                <li class="list-group-item">操作系统: ${ os }</li>
+                                <li class="list-group-item">是否在线: ${ status ? '是' : '否' }</li>
+                                `);
+                            }
+                        } else {
+                            alert(data.error);
+                        }
+                    }
+                });
+                // 主机详情
+                $.ajax({
+                    url: "/api/host/hostinfo/{{ pk }}/",
+                    type: 'get',
+                    data: {
+                        {#host: $('#host').val(),#}
+                    },
+                    success: function (data) {
+                        var data = JSON.parse(data);
+                        {#console.log(data);#}
+                        if (data.code == '200') {
+                            console.log(data);
+                            for (var i = 0; i < data.data.length; i++) {
+                                {#console.log(data.data[i]);#}
+                                let cpu_info = data.data[i]['cpu_info'];
+                                let kernel = data.data[i]['kernel'];
+                                let sn = data.data[i]['sn'];
+                                let os_version = data.data[i]['os_version'];
+                                let message = data.data[i]['message'];
+                                $('#hostinfo').append(
+                                    `
+                                <li class="list-group-item">CPU信息: ${ cpu_info }</li>
+                                <li class="list-group-item">内核名称: ${ kernel }</li>
+                                <li class="list-group-item">序列号: ${ sn }</li>
+                                <li class="list-group-item">操作系统版本: ${ os_version }</li>
+                                <li class="list-group-item">备注信息: ${ message }</li>
+                                `);
+                            }
+                        } else {
+                            console.log(data.error);
+                            {#alert(data.error);#}
+                        }
+                    }
+                });
+
+                // 磁盘
+                $.ajax({
+                    url: "/api/host/disk/{{ pk }}/",
+                    type: 'get',
+                    data: {
+                        {#host: $('#host').val(),#}
+                    },
+                    success: function (data) {
+                        var data = JSON.parse(data);
+                        {#console.log(data);#}
+                        if (data.code == '200') {
+                            console.log(data);
+                            for (var i = 0; i < data.data.length; i++) {
+                                {#console.log(data.data[i]);#}
+                                let device_name = data.data[i]['device_name'];
+                                let disk_type = data.data[i]['disk_type'];
+                                let disk_size = data.data[i]['disk_size'];
+                                $('#disk').append(
+                                    `
+                                <li class="list-group-item">设备名: ${ device_name }</li>
+                                <li class="list-group-item">硬盘类型: ${ disk_type }</li>
+                                <li class="list-group-item">硬盘大小: ${ disk_size }</li>
+                                `);
+                            }
+                        } else {
+                            console.log(data.error);
+                            {#alert(data.error);#}
+                        }
+                    }
+                });
+
+                // 网络
+                $.ajax({
+                    url: "/api/host/network/{{ pk }}/",
+                    type: 'get',
+                    data: {
+                        {#host: $('#host').val(),#}
+                    },
+                    success: function (data) {
+                        var data = JSON.parse(data);
+                        {#console.log(data);#}
+                        if (data.code == '200') {
+                            console.log(data);
+                            for (var i = 0; i < data.data.length; i++) {
+                                {#console.log(data.data[i]);#}
+                                let network_name = data.data[i]['network_name'];
+                                let ipaddr = data.data[i]['ipaddr'];
+                                let netmask = data.data[i]['netmask'];
+                                let network = data.data[i]['network'];
+                                let mac_addr = data.data[i]['mac_addr'];
+                                let bandwidth = data.data[i]['bandwidth'];
+                                let active = data.data[i]['active'];
+                                let region = data.data[i]['region'];
+                                let message = data.data[i]['message'];
+
+                                $('#network').append(
+                                    `
+                                <li class="list-group-item">网卡名称: ${ network_name }</li>
+                                <li class="list-group-item">IP地址: ${ ipaddr }</li>
+                                <li class="list-group-item">子网掩码: ${ netmask }</li>
+                                <li class="list-group-item">网络地址: ${ network }</li>
+                                <li class="list-group-item">MAC地址: ${ mac_addr }</li>
+                                <li class="list-group-item">网卡速率: ${ bandwidth }</li>
+                                <li class="list-group-item">是否激活: ${ active ? '是' : '否' }</li>
+                                <li class="list-group-item">机房: ${ region }</li>
+                                <li class="list-group-item">备注信息: ${ message }</li>
+                                `);
+                            }
+                        } else {
+                            console.log(data.error);
+                            {#alert(data.error);#}
+                        }
+                    }
+                });
+
+
+            }
+
+
+        });
+    </script>
+
+
+{% endblock %}
+

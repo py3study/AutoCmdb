@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+    <div class="col-sm-6 col-sm-offset-3">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">添加组名</h3>
+            </div>
+            <div class="panel-body">
+                <input type="text" name="group" placeholder="请输入Ansible组名" id="group"/>
+                <button id="sub">提交</button>
+                <span id="error" style="color: red"></span>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $('#sub').click(function () {
+            {#console.log($('#group').val());#}
+            var group = $('#group').val();
+            if (group.length == 0) {
+                sweetAlert("添加失败！", "组名不能为空", "error");
+            } else {
+                $.ajax({
+                    url: "/api/ansible/add/",
+                    type: 'post',
+                    data: {
+                        group: group,
+                    },
+                    success: function (data) {
+                        var data = JSON.parse(data);
+                        console.log(data);
+                        if (data.code == '200') {
+                            {#console.log(data.url);#}
+                            {#window.location.href = data.url;#}
+                            swal({
+                                title: '添加成功',
+                                type: 'success',  //展示成功的图片
+                                timer: 500,  //延时500毫秒
+                                showConfirmButton: false  //关闭确认框
+                            }, function () {
+                                window.location.href = data.url;  //跳转
+                            });
+                        } else {
+                            {#$('#error').text(data.error);#}
+                            sweetAlert("添加失败！", data.error, "error");
+                        }
+
+                    }
+                });
+            }
+
+        });
+
+    </script>
+
+{% endblock %}

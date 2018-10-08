@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Highcharts Example</title>
+
+    <style type="text/css">
+
+    </style>
+    {#配置favicon.ico，解决警告Not Found: /favicon.ico#}
+    {% load staticfiles %}
+    <link REL="SHORTCUT ICON" HREF="{% static "img/favicon.ico" %}"/>
+</head>
+<body>
+<script type="application/javascript" src="{% static 'plugins/sweetalert/jquery-3.3.1.min.js' %}"></script>
+<script type="application/javascript" src="{% static 'plugins/Highcharts-6.1.2/code/highcharts.js' %}"></script>
+<script type="application/javascript" src="{% static 'plugins/Highcharts-6.1.2/code/modules/exporting.js' %}"></script>
+<script type="application/javascript" src="{% static 'plugins/Highcharts-6.1.2/code/modules/export-data.js' %}"></script>
+
+
+{#<script src="../static/js/jquery-3.3.1.min.js"></script>#}
+{#<script src="../static/Highcharts-6.1.0/highcharts.js"></script>#}
+{#<script src="../static/Highcharts-6.1.0/modules/exporting.js"></script>#}
+{#<script src="../static/Highcharts-6.1.0/modules/export-data.js"></script>#}
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<script type="text/javascript">
+    {#解决显示时间少8小时问题#}
+    Highcharts.setOptions({global: {useUTC: false}});
+
+    $.getJSON(
+        {#'https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/usdeur.json',#}
+        '/api/cpu/chart_json/{{ pk }}/',
+        function (data) {
+
+            Highcharts.chart('container', {
+                chart: {
+                    zoomType: 'x'
+                },
+                title: {
+                    text: 'cpu使用率'
+                },
+                subtitle: {
+                    text: document.ontouchstart === undefined ?
+                        '单击并拖动绘图区域以放大' : '捏合图表放大'
+                },
+                xAxis: {
+                    type: 'datetime',
+
+                },
+                {#自定义x坐标信息显示,return部分是用js拼接的,内容可以自己定义。#}
+                tooltip: {
+                    formatter: function () {
+                        return '<strong>' + this.series.name + ':' + this.y + '%<br/></strong>' +
+                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x);
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: '使用率'
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                    area: {
+                        fillColor: {
+                            linearGradient: {
+                                x1: 0,
+                                y1: 0,
+                                x2: 0,
+                                y2: 1
+                            },
+                            stops: [
+                                [0, Highcharts.getOptions().colors[0]],
+                                [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                            ]
+                        },
+                        marker: {
+                            radius: 2
+                        },
+                        lineWidth: 1,
+                        states: {
+                            hover: {
+                                lineWidth: 1
+                            }
+                        },
+                        threshold: null
+                    }
+                },
+
+                series: [{
+                    type: 'area',
+                    name: '百分比',
+                    data: data
+                }]
+            });
+        }
+    );
+</script>
+</body>
+</html>
