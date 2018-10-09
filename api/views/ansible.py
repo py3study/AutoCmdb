@@ -127,6 +127,7 @@ class AnsibleView(ViewSetMixin, APIView):
         # 插入数据库中
         try:
             obj = models.AnsibleHost.objects.create(ip=host,group_id=pk)
+
             # print(obj)
             # print(host,pk)
             if obj:
@@ -135,8 +136,7 @@ class AnsibleView(ViewSetMixin, APIView):
                 res.code = 500
                 res.error = "插入记录失败"
                 return HttpResponse(json.dumps(res.__dict__))
-
-            # return HttpResponse(json.dumps(res.__dict__))
+            # pass
 
         except Exception as e:
             print(e)
@@ -147,7 +147,7 @@ class AnsibleView(ViewSetMixin, APIView):
         # 写入到配置文件中
         queryset = models.AnsibleGroup.objects.all()
         result = FM(queryset).write()  # type:dict
-        # print(result)
+        # print(result,'写入情况')
         if result.get("error"):
             res.code = 500
             res.error = result.get("error")
@@ -156,10 +156,11 @@ class AnsibleView(ViewSetMixin, APIView):
 
         # 执行setup模块,收集主机硬件信息
         data = exec_ansible(module='setup', args='', host=host)
+        # print(data)
         # 判断执行结果
         if not data:
             res.code = 500
-            res.error = "执行错误"
+            res.error = "setup执行错误"
             return HttpResponse(json.dumps(res.__dict__))
 
         # 将执行结果进行筛选,提取有效数据

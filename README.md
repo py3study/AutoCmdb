@@ -123,21 +123,29 @@ ansible主机：
 ```
 首先需要编译安装python3,请参考链接:
 http://www.py3study.com/Article/details/id/320.html
-做到显示版本为止,添加软连接
+做到编译安装完成为止,添加软连接
 ln -s /usr/local/python3/bin/python3.6 /usr/bin/python3
 ln -s /usr/local/python3/bin/pip3.6 /usr/bin/pip3
+
+安装2个系统软件
+yum install -y ansible expect
+
 
 安装python相关模块
 pip3 install django==1.11
 pip3 install djangorestframework
 pip3 install ansible
+或者使用requirements.txt文件安装相关模块
+pip3 install -r requirements.txt
 
 最后切换到项目目录,使用以下命令运行
 python3 manage.py runserver 0.0.0.0:8000
 ```
 ### ansible被控端
 ```
-编译安装python3,参考上面的操作
+编译安装python3,参考上面的操作!
+注意：被控端不需要安装ansible!!!
+
 安装python相关模块
 pip3 install psutil
 

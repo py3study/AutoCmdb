@@ -84,6 +84,7 @@ class LoginLinux(object):
         else:
             cmd = "ssh-keyscan -H -t ecdsa -p {} {} >> ~/.ssh/known_hosts".format(self.port,self.host)
 
+        # print(cmd)
         ret = self.execute_linux(cmd)
         # print(ret)
         # 判断执行结果
@@ -113,7 +114,7 @@ class LoginLinux(object):
             # print(yum,"安装了yum")
             if "完毕" not in yum.get("data"):
                 self.res.code = 500
-                self.res.error = "安装expect失败!"
+                self.res.error = "yum安装expect失败!"
                 return self.res.__dict__
 
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 项目根目录
@@ -123,14 +124,26 @@ class LoginLinux(object):
         # expect remotExect.sh 22 root 123456 192.168.142.131
         # print(cmd)
         # 此命令必须执行2次才能成功,第一次必然失败,需要跳过超时报错
-        self.execute_linux(cmd,3,True)
+        # self.execute_linux(cmd,3,True)
         # 第二次就ok了!
         ret = self.execute_linux(cmd,5)
+        # print(ret)
 
         if "Permission" in ret.get("data"):
             self.res.code = 500
             self.res.error = "执行remotExect.sh失败!用户名和密码错误"
             return self.res.__dict__
+
+        # 为远程主机生成ssh秘钥
+        cmd = 'ssh {}@{} "{}"'.format(self.user,self.host,"ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa")
+        # print(cmd)
+        ret = self.execute_linux(cmd,5)
+        if "password" in ret.get("data"):
+            print("ssh认证失败")
+            self.res.code = 500
+            self.res.error = "ssh认证失败"
+            return self.res.__dict__
+        # print(ret)
 
         return self.res.__dict__
 

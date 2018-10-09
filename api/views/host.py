@@ -83,7 +83,7 @@ class HostView(ViewSetMixin, APIView):
         # 判断执行结果
         if not data:
             res.code = 500
-            res.error = "执行错误"
+            res.error = "setup执行错误1"
             return HttpResponse(json.dumps(res.__dict__))
 
 
