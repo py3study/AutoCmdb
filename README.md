@@ -79,7 +79,7 @@ CMDB管理系统,基于Ansible最新版开发,采用前后端分离架构
 | Project | version | Description |
 |---------|--------|-------------|
 | python  | 3.6.5 | 无 |
-| django  | 1.11 | 必须此版本 |
+| django  | 1.11.15 | 必须此版本 |
 | djangorestframework  | 3.8.2 | 无 |
 | ansible  |2.7.0 | 不能低于此版本 |
 
@@ -130,7 +130,7 @@ yum install -y ansible expect
 
 
 安装python相关模块
-pip3 install django==1.11
+pip3 install django==1.11.15
 pip3 install djangorestframework
 pip3 install ansible
 或者使用requirements.txt文件安装相关模块
