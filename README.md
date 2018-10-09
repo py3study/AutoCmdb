@@ -145,9 +145,12 @@ python3 manage.py runserver 0.0.0.0:8000
 注意：被控端不需要安装ansible!!!
 
 安装python相关模块
-pip3 install psutil
+pip3 install requests psutil
 
-将项目中的ansible_client拷贝到opt目录中,设置任务计划
+将项目中的ansible_client拷贝到opt目录中
+注意：务必修改cpu.py和memory.py中的ip地址
+
+设置linux任务计划:
 
 # 监控cpu和内存
 * * * * * python3 /opt/ansible_client/monitor/cpu.py
@@ -157,7 +160,9 @@ pip3 install psutil
 ## 网页操作
 ```
 请务必安装以下操作进行：
-访问页面： http://ip地址/web/
+访问页面： http://ip地址/web/  
+注意：必须使用谷歌浏览器访问,360浏览器可能某些数据无法加载！
+
 1. 进入首页,点击左侧ansible管理。必须先添加组
 2. 添加组之后,再点击添加主机
 3. 最后点击左侧ansible主机,就可以查看主机详情和监控图表了
