@@ -123,9 +123,7 @@ ansible主机：
 ```
 首先需要编译安装python3,请参考链接:
 http://www.py3study.com/Article/details/id/320.html
-做到编译安装完成为止,添加软连接
-ln -s /usr/local/python3/bin/python3.6 /usr/bin/python3
-ln -s /usr/local/python3/bin/pip3.6 /usr/bin/pip3
+做到添加豆瓣源为止,请务必按照本教程操作,否则会出现没有pip3的问题!!!
 
 安装2个系统软件
 yum install -y ansible expect
